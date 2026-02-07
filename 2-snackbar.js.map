@@ -1,0 +1,1 @@
+{"version":3,"file":"2-snackbar.js","sources":["../src/js/2-snackbar.js"],"sourcesContent":["\n`✅ Fulfilled promise in ${delay}ms`\n`❌ Rejected promise in ${delay}ms`\n"],"names":[],"mappings":"wFACA,0BAA0B,KAAK,6BACN,KAAK"}
