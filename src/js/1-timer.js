@@ -1,17 +1,81 @@
+import flatpickr from  "flatpickr" ;
+import "flatpickr/dist/flatpickr.min.css";
+import iziToast from "izitoast";
+import "izitoast/dist/css/iziToast.min.css";
+
+const input = document.querySelector("#datetime-picker");
+const startBtn = document.querySelector("[data-start]");
+
+startBtn.disabled = true;
+let userSelectedDate = null;
+
 const options = {
-   enableTime : true ,
-   time_24hr : true ,
-   defaultDate : new  Date (),
-   minuteIncrement : 1 ,
-   onClose ( selectedDates ) {
-     console . log (selectedDates[ 0 ]);
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose(selectedDates) {
+      const selectedDate = selectedDates[0];
+      if (selectedDate <= new Date()) {
+          iziToast.error({
+              message: "Please choose a date in the future",
+              position: "topRight"
+          });
+          startBtn.disabled = true;
+          userSelectedDate = null;
+          return;
+      }
+      userSelectedDate = selectedDate;
+      startBtn.disabled = false;
   },
 };
 
-const startBtn = document.querySelector("button[data-start]");
-const stopBtn = document.querySelector("button[data-action-stop]");
-const clockface = document.querySelector(".clockface");
+flatpickr(input, options);
 
+const daysEl=document.querySelector('[data-days]');
+const hoursEl=document.querySelector('[data-hours]');
+const minutesEl=document.querySelector('[data-minutes]');
+const secondsEl=document.querySelector('[data-seconds]');
+
+
+let countdownIntervalId = null;
+
+startBtn.addEventListener('click', () => {
+  startBtn.disabled = true;
+  input.disabled = true;
+
+  
+
+  countdownIntervalId = setInterval(() => {
+    const now = new Date(); 
+    const timeLeft = userSelectedDate - now;
+
+    
+    if (timeLeft <= 0) {
+      clearInterval(countdownIntervalId);
+      updateTimer({
+        days: 0, hours: 0, minutes: 0, seconds: 0
+      });
+    
+  input.disabled = false;
+  return;
+}
+    const time = convertMs(timeLeft);
+    updateTimer(time);
+  }, 1000);
+});
+
+function updateTimer({days, hours, minutes, seconds}) {
+  daysEl.textContent = addLeadingZero(days);
+  hoursEl.textContent = addLeadingZero(hours);
+  minutesEl.textContent = addLeadingZero(minutes);
+  secondsEl.textContent = addLeadingZero(seconds);
+}
+
+
+function addLeadingZero(value) {
+  return String(value).padStart(2, '0');
+}
 
 
 function convertMs (ms) {
@@ -32,4 +96,31 @@ function convertMs (ms) {
 
   return { days, hours, minutes, seconds };
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+
+
+
+
 
